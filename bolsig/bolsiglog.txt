@@ -1,0 +1,14 @@
+BOLSIG+ script file: input-runseries_9_E_min_0.11580949153517606_E_max267.41464409031556.dat
+READCOLLISIONS
+He
+LXCat-June2013.txt
+How to reference in publications:
+1) PHELPS database, http://www.lxcat.laplace.univ-tlse.fr, retrieved June 4, 2013
+C1    He    Effective (momentum)                                
+C2    He    Excitation    19.80 eV                              
+C3    He    Ionization    24.58 eV                              
+RUN
+R1    267. Td    27.2 eV                                        
+SAVERESULTS
+testrun_9_E_min_0.11580949153517606_E_max267.41464409031556.dat
+FINISHED
