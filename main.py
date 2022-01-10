@@ -36,15 +36,14 @@ with open(os.path.join(sys.path[0], 'data/Count_rates.csv'), "r") as rf:
   df = pd.read_csv(rf)
   cr_gamma_5yr = np.mean(df['Gamma_5yr [cps]'])
   cr_SF_5yr = np.mean(df['SF_5yr [cps]'])
-cr_gamma_list =np.linspace(1,2,10)*cr_gamma_5yr 
+cr_gamma_list =np.array([1, 10, 20])*cr_gamma_5yr 
 cr_SF_list =np.linspace(1,1,1)*cr_SF_5yr 
 gamma_file = 'data/Gamma_5yr_tracks.csv'
 SF_file = 'data/SF_5yr_tracks.csv'
 
 #run for different resistances to vary tau
 tau=6.409214453193086e-06
-for res in np.array([1.5e3]):
-
+for res in np.array([1.2e3]):
   #Design detector, specifications gathered from https://www.lndinc.com/products/neutron-detectors/he3-detectors/25257/ 
   det = detector(r_a=0.0055e-3,r_c=(2.54e-2)/2,L=3e-2,V=1.1e3,P=4e5,T=300, R=res,tau=tau)
  
@@ -153,6 +152,8 @@ for res in np.array([1.5e3]):
 
 ## Effektivitet som funktion av hit rate
 ## Olika gamma preparat, vi har mer realistisk fördelning
-    
+
+#t_global_g = np.linspace(t_start,max_value(t_g),10000)
+t_global_g = np.arange(t_start,max_value(t_g),1e-7) 
   print('\n')
 print('Done, all results in results folder. To plot results from a csv use the file plotResult.py ')
