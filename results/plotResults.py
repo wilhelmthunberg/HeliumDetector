@@ -3,9 +3,11 @@ import pandas as pd
 import os 
 import sys
 import numpy as np
-with open(os.path.join(sys.path[0], 'results_tau=1.0775076213251382e-05_gamma_3months.csv'), "r") as f:
+os.chdir('/Users/w/Project_AppliedPhys/Code')
+
+with open(os.path.join(sys.path[0], 'data/Gamma_5yr_tracks'), "r") as f:
     df = pd.read_csv(f)
-    t = np.array(df['Time'])
+    E = np.array(df[''])
     for det in range(0,18):
         plt.figure(det)
         plt.plot(t*1e6, df['Detector_'+str(det)])

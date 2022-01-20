@@ -1,0 +1,4 @@
+BOLSIG+ script file: input-runseries_9_E_min_0.11580949153517606_E_max267.41464409031556.dat
+READCOLLISIONS
+Cannot find file LXCat-June2013.txt
+ ABORT: Error in input file line:          11

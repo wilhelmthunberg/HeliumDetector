@@ -8,6 +8,10 @@ C1    He    Effective (momentum)
 C2    He    Excitation    19.80 eV                              
 C3    He    Ionization    24.58 eV                              
 RUN
+R1    238. Td    24.2 eV                                        
+SAVERESULTS
+testrun_8_E_min_0.11580949153517606_E_max267.41464409031556.dat
+FINISHED
 R1    267. Td    27.2 eV                                        
 SAVERESULTS
 testrun_9_E_min_0.11580949153517606_E_max267.41464409031556.dat

@@ -4,7 +4,7 @@ import sys
 import pandas as pd
 import numpy as np
 from scipy.stats import expon
-from chargeTrail import chargeTrail
+from chargeTrack import chargeTrack
 import random
 from scipy import interpolate
 
@@ -44,7 +44,7 @@ def runTracks(det,filename,rateFile,cutOff,t_start,detCoords, det_of_interest, r
     else:
       start_x =  (df['Start_x'][x]-detCoords[int(df['Detector_no'][x])][0])*1e-2;  end_x =  (df['End_x'][x]-detCoords[int(df['Detector_no'][x])][0])*1e-2
       start_y =  (df['Start_y'][x]-detCoords[int(df['Detector_no'][x])][1])*1e-2;  end_y =  (df['End_y'][x]-detCoords[int(df['Detector_no'][x])][1])*1e-2
-      I, sigs, t_sigs, num_seg=chargeTrail(det,df['Start_E'][x]*1e6,df['End_E'][x]*1e6,start_x, end_x, start_y, end_y, df['Start_z'][x]*1e-2, df['End_z'][x]*1e-2,t,t)
+      I, sigs, t_sigs, num_seg=chargeTrack(det,df['Start_E'][x]*1e6,df['End_E'][x]*1e6,start_x, end_x, start_y, end_y, df['Start_z'][x]*1e-2, df['End_z'][x]*1e-2,t,t)
       allSig +=sigs
       ts+=t_sigs
       Is+=I

@@ -14,7 +14,10 @@ import sys
 import os
 import time
 import csv
+sys.path.append(sys.path[0]+'/bolsig')
+from Bolsig_python import mobilityCalc
 
+#define necessary functions
 def max_value(inputlist):
   return max([max(sublist) for sublist in inputlist])
 
@@ -28,27 +31,37 @@ def nearest(array, value):
 ------------------------------------------------------------------
 Code for test run
 """
+
 #Define run parameters 
-track_fraction = 0.2
-det_of_interest = range(11,12)
-#Count Rates
+
+#tau value
+tau=6.409214453193086e-06
+
+track_fraction = 0.2 #fraction of input files used
+det_of_interest = range(0,18) #detectors of interest
+#Count Rates in the detectors. I.e. for what hit rates are we studying detector behaviour.
 with open(os.path.join(sys.path[0], 'data/Count_rates.csv'), "r") as rf:
   df = pd.read_csv(rf)
   cr_gamma_5yr = np.mean(df['Gamma_5yr [cps]'])
   cr_SF_5yr = np.mean(df['SF_5yr [cps]'])
-cr_gamma_list =np.array([1, 10, 20])*cr_gamma_5yr 
-cr_SF_list =np.linspace(1,1,1)*cr_SF_5yr 
+cr_gamma_list =np.array([1,5,10,20])*cr_gamma_5yr 
+cr_SF_list =np.array([1])*cr_SF_5yr 
 gamma_file = 'data/Gamma_5yr_tracks.csv'
 SF_file = 'data/SF_5yr_tracks.csv'
 
-#run for different resistances to vary tau
-tau=6.409214453193086e-06
-for res in np.array([1.2e3]):
+#run for different values of applied voltage 
+for V in np.array([1.1e3, 1.2e3,1.3e3,1.4e3,1.5e3]):
+  #----------
   #Design detector, specifications gathered from https://www.lndinc.com/products/neutron-detectors/he3-detectors/25257/ 
-  det = detector(r_a=0.0055e-3,r_c=(2.54e-2)/2,L=3e-2,V=1.1e3,P=4e5,T=300, R=res,tau=tau)
- 
+  
+  det = detector(r_a=0.0055e-3,r_c=(2.54e-2)/2,L=30e-2,V=V,P=4e5,T=300, R=1.2e3,tau=tau)
+  
+  #----------
   print('\nTau: ', tau, '[Ohm Farad]\n' )
   print('\n Calculating for ',track_fraction*100, '% of the input files.')
+  #change back to correct directory
+  os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 
   #Detector coordinates, gathered from MCNP run.
   detCoords=[]
@@ -65,14 +78,14 @@ for res in np.array([1.2e3]):
   #excecute runtracks and add signals for different count rates of gamma radiations
   for cr_gamma in cr_gamma_list:
     print('\n\nGamma count rate:', cr_gamma)
-    det = detector(r_a=0.0055e-3,r_c=(2.54e-2)/2,L=3e-2,V=1.1e3,P=4e5,T=300, R=res,tau=tau)
+    time.sleep(1)
     #create new directories
     newDirs =['results/NPS_by_detector/tau='+str(tau), 'results/gamma/tau='+str(tau), 'results/NPS_by_detector/tau='+str(tau)+'/gamma', 'results/NPS_by_detector/tau='+str(tau)+'/gamma/count_rate='+str(round(cr_gamma))]
     for newDir in newDirs:
       if not os.path.exists(newDir):
         os.mkdir(newDir)
   
-
+    #calculate pulses for each track in input file
     NPS_g, t0_g, detector_g, dt_g,I_g, t_g, allSig_g = runTracks(det,gamma_file, 'data/Count_rates.csv', 1/track_fraction,t_start, detCoords,det_of_interest,rate=cr_gamma)
     
     #Interpolate each signal, this provides possibility to add all signals
@@ -81,19 +94,24 @@ for res in np.array([1.2e3]):
                   fill_value=0, bounds_error=False) 
                   for i in range(0,len(t_g))])
     
+    #global time array
     t_global_g = np.linspace(t_start,max_value(t_g),10000)
+
+    #array for storing pulse values for different detectors
     signal_in_detector_from_g=[[] for i in range(18)]
-    for det in range(0,18):
+
+    #add pule values to det list
+    for det_no in range(0,18):
       totSig_g = np.zeros((len(t_global_g)))
-      index_g = np.where(np.array(detector_g)==det)[0]
+      index_g = np.where(np.array(detector_g)==det_no)[0]
       for s in allSig_g_inter[index_g]:
           totSig_g+=s(t_global_g)
-          print('Adding all signals from gamma induced tracks in detector: ',det,'...'   ,end='\r')
+          print('Adding all signals from gamma induced tracks in detector: ',det_no,'...'   ,end='\r')
       dict={'t_0_g':np.take(t0_g,index_g), 'NPS_g':np.take(NPS_g,index_g)}
       df = pd.DataFrame(dict) 
-      df.to_csv(os.path.join(sys.path[0],'results/NPS_by_detector/tau='+str(tau)+'/gamma/count_rate='+str(round(cr_gamma))+'/'+str(det)+'.csv'))  
+      df.to_csv(os.path.join(sys.path[0],'results/NPS_by_detector/tau='+str(tau)+'/gamma/count_rate='+str(round(cr_gamma))+'/'+str(det_no)+'.csv'))  
 
-      signal_in_detector_from_g[det] =totSig_g
+      signal_in_detector_from_g[det_no] =totSig_g
     
     signal_in_detector = np.array(signal_in_detector_from_g)
     dict = {'Time': t_global_g, 'Detector_0':signal_in_detector[0], 'Detector_1':signal_in_detector[1],  
@@ -105,12 +123,13 @@ for res in np.array([1.2e3]):
     'Detector_17':signal_in_detector[17]   }
     df = pd.DataFrame(dict) 
 
-    df.to_csv(os.path.join(sys.path[0],'results/gamma/tau='+str(tau)+'/count_rate='+str(round(cr_gamma))))    
+    #save results to file
+    df.to_csv(os.path.join(sys.path[0],'results/gamma/tau='+str(tau)+'/V='+str(V)+'count_rate='+str(round(cr_gamma))))    
   #----------
   #Spontaneous fission
+  track_fraction=0.12
   for cr_SF in cr_SF_list:
     print('\nSF count rate:', cr_SF,'\n')
-    det = detector(r_a=0.0055e-3,r_c=(2.54e-2)/2,L=3e-2,V=1.1e3,P=4e5,T=300, R=res, tau=tau)
     newDirs =['results/NPS_by_detector/tau='+str(tau), 'results/SF/tau='+str(tau), 'results/NPS_by_detector/tau='+str(tau)+'/SF',  'results/NPS_by_detector/tau='+str(tau)+'/SF/count_rate='+str(round(cr_SF))]
     for newDir in newDirs:
       if not os.path.exists(newDir):
@@ -124,19 +143,18 @@ for res in np.array([1.2e3]):
     allSig_n_inter = np.array([interpolate.interp1d(t_n[i],allSig_n[i],kind='slinear',  
                       fill_value=0, bounds_error=False) 
                       for i in range(0,len(t_n))])
-    
-    t_global_n = np.linspace(t_start,max_value(t_n),10000)
+    t_global_n = np.arange(t_start,max_value(t_n),4e-7) 
     signal_in_detector_from_n=[[] for i in range(18)]
-    for det in range(0,18):
+    for det_no in range(0,18):
       totSig_n = np.zeros((len(t_global_n)))
-      index_n = np.where(np.array(detector_n)==det)[0]
+      index_n = np.where(np.array(detector_n)==det_no)[0]
       for s in allSig_n_inter[index_n]:
           totSig_n+=s(t_global_n)
-          print('Adding all signals from neutron induced tracks in detector: ',det,'...'   ,end='\r')
+          print('Adding all signals from neutron induced tracks in detector: ',det_no,'...'   ,end='\r')
       dict={'t_0_n':np.take(t0_n,index_n), 'NPS_n':np.take(NPS_n,index_n)}
       df = pd.DataFrame(dict) 
-      df.to_csv(os.path.join(sys.path[0],'results/NPS_by_detector/tau='+str(tau)+'/SF/count_rate='+str(round(cr_SF))+'/'+str(det)+'.csv'))  
-      signal_in_detector_from_n[det] = totSig_n      
+      df.to_csv(os.path.join(sys.path[0],'results/NPS_by_detector/tau='+str(tau)+'/SF/count_rate='+str(round(cr_SF))+'/'+str(det_no)+'.csv'))  
+      signal_in_detector_from_n[det_no] = totSig_n      
     
     signal_in_detector = np.array(signal_in_detector_from_n)
     dict = {'Time': t_global_n, 'Detector_0':signal_in_detector[0], 'Detector_1':signal_in_detector[1],  
@@ -146,14 +164,8 @@ for res in np.array([1.2e3]):
     'Detector_11':signal_in_detector[11], 'Detector_12':signal_in_detector[12], 'Detector_13':signal_in_detector[13],
     'Detector_14':signal_in_detector[14], 'Detector_15':signal_in_detector[15], 'Detector_16':signal_in_detector[16],
     'Detector_17':signal_in_detector[17]   }
-    df = pd.DataFrame(dict) 
+    df = pd.DataFrame(dict)         
+    
+    #save results to file
+    df.to_csv(os.path.join(sys.path[0],'results/SF/tau='+str(tau)+'/V='+str(V)+'count_rate='+str(round(cr_SF))))    
 
-    df.to_csv(os.path.join(sys.path[0],'results/SF/tau='+str(tau)+'/count_rate='+str(round(cr_SF))))    
-
-## Effektivitet som funktion av hit rate
-## Olika gamma preparat, vi har mer realistisk fördelning
-
-#t_global_g = np.linspace(t_start,max_value(t_g),10000)
-t_global_g = np.arange(t_start,max_value(t_g),1e-7) 
-  print('\n')
-print('Done, all results in results folder. To plot results from a csv use the file plotResult.py ')
