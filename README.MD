@@ -34,12 +34,12 @@ what data they contain. Using **plotResults.py** the data can be plotted.
 
 - *detector parameters* (Geometry, Resistance, Capacitance and Voltage) - > **main.py**
 
-- *tau* -> USer can change tau by editing input Resistance, defined as *res* in **main.py**
+- *tau* -> USer can change tau in **main.py**
 
 - *num_seg* -> **chargeTrail.py** (Calculated by dividing total energy deposited along track with 40KeV
 which gives roughly 240 ions per segment. Maximum num_seg is 10, if track is relatively long (0.1*L_det) the minium is 3.)
 
-- *dr* -> signal1.py (The legnth of the segments that the detector radius is divided into.
+- *dr* -> pulse.py (The legnth of the segments that the detector radius is divided into.
 dr governs the time step according to dt=dr/v and is decreases close to the anode.)
 
 - radiation detection rate -> **runTracks.py** from **data/Count_rates.csv**
@@ -51,7 +51,6 @@ t_global (for gamma and neutron) -> **main.py**
 
 ## File structure
 /main
-Bolsig_python.py
 main.py
 chargeTrail.py
 driftVel.py
@@ -65,6 +64,7 @@ runTracks.py
 signal1.py (Named like this as there is a built-in Python function with the name "signal")
 
 /main/bolsig
+Bolsig_python.py
 bolsigminus
 SigloDataBase-LXCat-04Jun2013.txt
 LXCat-June2013
