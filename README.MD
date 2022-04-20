@@ -1,11 +1,15 @@
+
+
 # Helium DEtector
-A model of gamma-ray interference in a $^3$He neutron detector in high count-rate environments
-README
-Authors:
-Aron Johanson & Wilhelm Thunberg
+
+Authors: Aron Johanson & Wilhelm Thunberg
+
+Supervisor: Markus Preston
+
+A model of gamma-ray interference in a Helium-3 neutron detector in high count-rate environments
 
 The following document describes how to use the code written for project 16
-of the applied physics course.
+of the Applied Physics project course at Uppsala University.
 
 The code is structured as a set of files each containing a necessary function.
 "detector.py" contains a class object for the detector.
