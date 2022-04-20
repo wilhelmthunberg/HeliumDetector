@@ -26,7 +26,9 @@ For each segment, **pulse.py** is called upon to calculate the induced current a
 **pulse.py** solves a differential equation using the Euler backwards method.
 
 The results from main are saved under the directory **main/results/** as .csv files. The file names indicate
-what data they contain. Using **plotResults.py** the data can be plotted.
+what data they contain. 
+
+Using **peakFinder.py** and **plotResults.py** the results can be visualized.
 
 ## Important parameters
 
