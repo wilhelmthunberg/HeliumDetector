@@ -4,7 +4,6 @@
 Created on Tue Nov 16 12:04:10 2021
 
 @author: aronj
-! IF FILENOTFOUND ERRORS ARE ENCOUNTERED, MAKE SURE YOU RUN THE MAIN METHOD FROM THE 'CODE' FOLDER!
 """
 
 from scipy import interpolate
@@ -16,7 +15,6 @@ import matplotlib.pyplot as plt
 import os
 import sys
 os.chdir(sys.path[0]+'/bolsig')
-#!IF FILENOTFOUND ERRORS ARE ENCOUNTERED, MAKE SURE YOU RUN THE MAIN METHOD FROM THE 'CODE' FOLDER!
 path=os.getcwd()+'/bolsigminus'
 
 run_file_original='input-master.dat'
