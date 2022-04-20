@@ -22,8 +22,8 @@ The characteristics of the detector is also provided here. All units are in *SI 
 
 **main.py** calls upon **runTracks.py** that reads the input files and launches **chargeTrail.py**
 which in turn calculates the ionisation along a track (a single line in the input data file) and divides it into segements.
-For each segment, **signal1.py** is called upon to calculate the induced current and voltage.
-**signal1.py** solves a differential equation using the Euler backwards method.
+For each segment, **pulse.py** is called upon to calculate the induced current and voltage.
+**pulse.py** solves a differential equation using the Euler backwards method.
 
 The results from main are saved under the directory **main/results/** as .csv files. The file names indicate
 what data they contain. Using **plotResults.py** the data can be plotted.
@@ -61,7 +61,7 @@ multFactor.py
 numDens.py
 processResults.py
 runTracks.py
-signal1.py (Named like this as there is a built-in Python function with the name "signal")
+pulse.py 
 
 /main/bolsig
 Bolsig_python.py
