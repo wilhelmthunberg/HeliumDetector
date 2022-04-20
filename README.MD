@@ -52,30 +52,50 @@ t_global (for gamma and neutron) -> **main.py**
 
 
 ## File structure
-/main
-main.py
+/main:
+###main.py
+Run simulation and specify output data. Returns result files 
+
+
 chargeTrail.py
+
 driftVel.py
+
 field.py
+
 inducedCurrent.py
+
 main.py
+
 multFactor.py
+
 numDens.py
+
 processResults.py
+
 runTracks.py
+
 pulse.py 
 
 /main/bolsig
+
 Bolsig_python.py
+
 bolsigminus
+
 SigloDataBase-LXCat-04Jun2013.txt
+
 LXCat-June2013
 
 /main/data
 Count_rates.csv
+
 Gamma_3months_tracks.csv
+
 Gamma_5yr_tracks
+
 SF_3months_tracks.csv
+
 SF_5yr_tracks.csv
 
 /main/results/
