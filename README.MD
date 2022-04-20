@@ -17,7 +17,7 @@ The code is structured as a set of files each containing a necessary function.
 ## Files
 ### /main:
 
-**main.py** : Run simulation and specify input data. Returns result files in */results* 
+**main.py** : Run simulation and specify input data. Returns result files with voltage readings of detectors in */results* 
 
 
 **chargeTrack.py** :  Function that models the ionisation of the gas along a photoelectron's path inside the volume.
